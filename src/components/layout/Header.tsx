@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Search,
   Bell,
   CheckCheck,
@@ -29,10 +31,17 @@ import { GlobalSearchModal } from '@/components/search/GlobalSearchModal';
 
 interface HeaderProps {
   onToggleMobileMenu: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarCollapsed?: boolean;
   title?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, title }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onToggleMobileMenu,
+  onToggleSidebar,
+  isSidebarCollapsed = false,
+  title,
+}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -73,20 +82,39 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, title }) => 
   return (
     <>
       <header className="h-16 border-b border-border/80 bg-card/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between gap-4">
-        {/* Left: Mobile Toggle & Page Title */}
-        <div className="flex items-center gap-3">
+        {/* Left: Sidebar Toggle & Page Title */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile drawer toggle */}
           <Button
             variant="ghost"
             size="icon"
             className="md:hidden h-9 w-9 rounded-lg"
             onClick={onToggleMobileMenu}
-            aria-label="Menyu ochish"
+            aria-label="Mobil menyu ochish"
           >
             <Menu className="h-5 w-5" />
           </Button>
 
+          {/* Desktop collapse toggle */}
+          {onToggleSidebar && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:inline-flex h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
+              onClick={onToggleSidebar}
+              title={isSidebarCollapsed ? "Sidebarni ochish" : "Sidebarni yig'ish"}
+              aria-label={isSidebarCollapsed ? "Sidebarni ochish" : "Sidebarni yig'ish"}
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="h-5 w-5 text-primary" />
+              ) : (
+                <PanelLeftClose className="h-5 w-5" />
+              )}
+            </Button>
+          )}
+
           {title && (
-            <h1 className="text-lg font-bold tracking-tight text-foreground hidden sm:block">
+            <h1 className="text-base sm:text-lg font-bold tracking-tight text-foreground truncate max-w-[200px] sm:max-w-none">
               {title}
             </h1>
           )}

@@ -6,7 +6,18 @@ import { X } from 'lucide-react';
 
 export const DashboardLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('sidebar_collapsed') === 'true';
+  });
   const location = useLocation();
+
+  const handleToggleSidebar = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('sidebar_collapsed', String(next));
+      return next;
+    });
+  };
 
   // Determine current page title based on route
   const getPageTitle = (path: string): string => {
@@ -43,8 +54,12 @@ export const DashboardLayout: React.FC = () => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">
-      {/* Desktop Sidebar */}
-      <Sidebar className="hidden md:flex" />
+      {/* Desktop Collapsible Sidebar */}
+      <Sidebar
+        collapsed={isCollapsed}
+        onToggleCollapse={handleToggleSidebar}
+        className="hidden md:flex"
+      />
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
@@ -60,14 +75,23 @@ export const DashboardLayout: React.FC = () => {
             >
               <X className="h-5 w-5" />
             </button>
-            <Sidebar onNavigate={() => setMobileMenuOpen(false)} className="w-full border-r-0" />
+            <Sidebar
+              collapsed={false}
+              onNavigate={() => setMobileMenuOpen(false)}
+              className="w-full border-r-0"
+            />
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <Header onToggleMobileMenu={() => setMobileMenuOpen(true)} title={title} />
+        <Header
+          onToggleMobileMenu={() => setMobileMenuOpen(true)}
+          onToggleSidebar={handleToggleSidebar}
+          isSidebarCollapsed={isCollapsed}
+          title={title}
+        />
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto space-y-6">
