@@ -195,11 +195,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu, title }) => 
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer gap-2">
+              <DropdownMenuItem onClick={() => navigate('/profile?tab=profile')} className="cursor-pointer gap-2">
                 <User className="h-4 w-4" />
                 <span>Mening profilim</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer gap-2">
+              <DropdownMenuItem onClick={() => navigate('/profile?tab=settings')} className="cursor-pointer gap-2">
                 <Settings className="h-4 w-4" />
                 <span>Sozlamalar</span>
               </DropdownMenuItem>

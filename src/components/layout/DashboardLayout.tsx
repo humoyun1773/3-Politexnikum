@@ -32,9 +32,8 @@ export const DashboardLayout: React.FC = () => {
       case '/goals':
         return 'Shaxsiy maqsadlar';
       case '/profile':
-        return 'Talaba profili';
       case '/settings':
-        return 'Tizim sozlamalari';
+        return 'Profil & Sozlamalar';
       default:
         return '3-Politexnikum';
     }

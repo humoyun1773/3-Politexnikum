@@ -40,8 +40,7 @@ export const navigationItems = [
   { name: 'Kutubxona', path: '/library', icon: BookOpen },
   { name: 'E\'lonlar', path: '/announcements', icon: Bell },
   { name: 'Maqsadlar', path: '/goals', icon: Target },
-  { name: 'Profil', path: '/profile', icon: User },
-  { name: 'Sozlamalar', path: '/settings', icon: Settings },
+  { name: 'Profil & Sozlamalar', path: '/profile', icon: User },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ className, onNavigate }) => {

@@ -16,7 +16,6 @@ import { LibraryPage } from '@/pages/library/LibraryPage';
 import { AnnouncementsPage } from '@/pages/announcements/AnnouncementsPage';
 import { GoalsPage } from '@/pages/goals/GoalsPage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
-import { SettingsPage } from '@/pages/settings/SettingsPage';
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage';
 
 // Protected Route Guard
@@ -116,7 +115,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: <SettingsPage />,
+        element: <Navigate to="/profile?tab=settings" replace />,
       },
     ],
   },
