@@ -1,0 +1,1288 @@
+openapi: 3.0.3
+info:
+  title: 3-Politexnikum Student Hub API
+  version: 1.0.0
+paths:
+  /api/announcements/:
+    get:
+      operationId: api_announcements_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Announcement'
+          description: ''
+  /api/assignments/:
+    get:
+      operationId: api_assignments_list
+      description: Amaliyot / vazifalar
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/assignments/{id}/:
+    get:
+      operationId: api_assignments_retrieve
+      description: Amaliyot / vazifalar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/assignments/{id}/submit/:
+    post:
+      operationId: api_assignments_submit_create
+      description: Amaliyot / vazifalar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Assignment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Assignment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Assignment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: ''
+  /api/attendance/:
+    get:
+      operationId: api_attendance_list
+      description: |-
+        GET /api/attendance/?month=2026-11&status=absent&subject=3
+        GET /api/attendance/summary/?month=2026-11
+        GET /api/attendance/by-subject/
+        GET /api/attendance/calendar/?month=2026-11
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceItem'
+          description: ''
+  /api/attendance/by-subject/:
+    get:
+      operationId: api_attendance_by_subject_retrieve
+      description: |-
+        GET /api/attendance/?month=2026-11&status=absent&subject=3
+        GET /api/attendance/summary/?month=2026-11
+        GET /api/attendance/by-subject/
+        GET /api/attendance/calendar/?month=2026-11
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceItem'
+          description: ''
+  /api/attendance/calendar/:
+    get:
+      operationId: api_attendance_calendar_retrieve
+      description: |-
+        GET /api/attendance/?month=2026-11&status=absent&subject=3
+        GET /api/attendance/summary/?month=2026-11
+        GET /api/attendance/by-subject/
+        GET /api/attendance/calendar/?month=2026-11
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceItem'
+          description: ''
+  /api/attendance/summary/:
+    get:
+      operationId: api_attendance_summary_retrieve
+      description: |-
+        GET /api/attendance/?month=2026-11&status=absent&subject=3
+        GET /api/attendance/summary/?month=2026-11
+        GET /api/attendance/by-subject/
+        GET /api/attendance/calendar/?month=2026-11
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceItem'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: api_auth_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/refresh/:
+    post:
+      operationId: api_auth_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/chat/:
+    get:
+      operationId: api_chat_list
+      description: Guruh chat (oddiy REST; real-time uchun Channels qo'shish mumkin).
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+          description: ''
+    post:
+      operationId: api_chat_create
+      description: Guruh chat (oddiy REST; real-time uchun Channels qo'shish mumkin).
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+          description: ''
+  /api/dashboard/:
+    get:
+      operationId: api_dashboard_retrieve
+      description: Bosh sahifa uchun barcha ma'lumotlar bitta so'rovda.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/goals/:
+    get:
+      operationId: api_goals_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+          description: ''
+    post:
+      operationId: api_goals_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Goal'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+  /api/goals/{id}/:
+    get:
+      operationId: api_goals_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+    put:
+      operationId: api_goals_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Goal'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+    patch:
+      operationId: api_goals_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGoal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGoal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGoal'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+    delete:
+      operationId: api_goals_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/grades/:
+    get:
+      operationId: api_grades_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grade'
+          description: ''
+  /api/library/:
+    get:
+      operationId: api_library_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+          description: ''
+  /api/notifications/:
+    get:
+      operationId: api_notifications_list
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{id}/:
+    get:
+      operationId: api_notifications_retrieve
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    patch:
+      operationId: api_notifications_partial_update
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotification'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+    delete:
+      operationId: api_notifications_destroy
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/clear-read/:
+    delete:
+      operationId: api_notifications_clear_read_destroy
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/read-all/:
+    post:
+      operationId: api_notifications_read_all_create
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/unread-count/:
+    get:
+      operationId: api_notifications_unread_count_retrieve
+      description: |-
+        GET    /api/notifications/?unread=1&category=grade
+        GET    /api/notifications/unread-count/
+        PATCH  /api/notifications/<id>/        {"is_read": true}
+        POST   /api/notifications/read-all/
+        DELETE /api/notifications/<id>/
+        DELETE /api/notifications/clear-read/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/profile/:
+    get:
+      operationId: api_profile_retrieve
+      description: |-
+        GET /api/profile/  — profil + statistika
+        PATCH /api/profile/ — profilni tahrirlash (multipart: avatar ham bo'ladi)
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_profile_partial_update
+      description: |-
+        GET /api/profile/  — profil + statistika
+        PATCH /api/profile/ — profilni tahrirlash (multipart: avatar ham bo'ladi)
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/rating/:
+    get:
+      operationId: api_rating_retrieve
+      description: |-
+        GET /api/rating/?scope=group|all&subject=<id>&limit=20
+        O'rtacha baho bo'yicha reyting. Teng ballar bir xil o'rin oladi.
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/schedule/:
+    get:
+      operationId: api_schedule_list
+      description: |-
+        GET /api/schedule/?weekday=1     — oddiy ro'yxat
+        GET /api/schedule/week/          — haftalik, kunlar bo'yicha guruhlangan
+        GET /api/schedule/today/         — bugungi darslar
+        GET /api/schedule/next/          — keyingi dars
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/schedule/next/:
+    get:
+      operationId: api_schedule_next_retrieve
+      description: |-
+        GET /api/schedule/?weekday=1     — oddiy ro'yxat
+        GET /api/schedule/week/          — haftalik, kunlar bo'yicha guruhlangan
+        GET /api/schedule/today/         — bugungi darslar
+        GET /api/schedule/next/          — keyingi dars
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/schedule/today/:
+    get:
+      operationId: api_schedule_today_retrieve
+      description: |-
+        GET /api/schedule/?weekday=1     — oddiy ro'yxat
+        GET /api/schedule/week/          — haftalik, kunlar bo'yicha guruhlangan
+        GET /api/schedule/today/         — bugungi darslar
+        GET /api/schedule/next/          — keyingi dars
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/schedule/week/:
+    get:
+      operationId: api_schedule_week_retrieve
+      description: |-
+        GET /api/schedule/?weekday=1     — oddiy ro'yxat
+        GET /api/schedule/week/          — haftalik, kunlar bo'yicha guruhlangan
+        GET /api/schedule/today/         — bugungi darslar
+        GET /api/schedule/next/          — keyingi dars
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/schema/:
+    get:
+      operationId: api_schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - ht
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/search/:
+    get:
+      operationId: api_search_retrieve
+      description: 'Yuqoridagi qidiruv: fan yoki bo''lim nomi bo''yicha.'
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/settings/:
+    get:
+      operationId: api_settings_retrieve
+      description: GET/PATCH /api/settings/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_settings_partial_update
+      description: GET/PATCH /api/settings/
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/settings/change-password/:
+    post:
+      operationId: api_settings_change_password_create
+      description: POST /api/settings/change-password/  {old_password, new_password}
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - title
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        subject:
+          type: string
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        kind_display:
+          type: string
+        due_date:
+          type: string
+          format: date
+        days_left:
+          type: string
+          readOnly: true
+        submitted:
+          type: string
+          readOnly: true
+      required:
+      - days_left
+      - due_date
+      - id
+      - kind
+      - kind_display
+      - subject
+      - submitted
+      - title
+    AttendanceItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        subject:
+          type: string
+        date:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        status_display:
+          type: string
+      required:
+      - date
+      - id
+      - status
+      - status_display
+      - subject
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        author:
+          type: string
+          maxLength: 150
+        file:
+          type: string
+          format: uri
+      required:
+      - file
+      - id
+      - title
+    CategoryEnum:
+      enum:
+      - info
+      - grade
+      - assignment
+      - attendance
+      - system
+      type: string
+      description: |-
+        * `info` - Umumiy
+        * `grade` - Baho
+        * `assignment` - Vazifa
+        * `attendance` - Davomat
+        * `system` - Tizim
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sender:
+          type: integer
+          readOnly: true
+        sender_name:
+          type: string
+          readOnly: true
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - sender
+      - sender_name
+      - text
+    Goal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        is_done:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - title
+    Grade:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        subject:
+          type: string
+        score:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        date:
+          type: string
+          format: date
+          readOnly: true
+      required:
+      - date
+      - id
+      - score
+      - subject
+    KindEnum:
+      enum:
+      - control
+      - practice
+      - test
+      - bsb
+      type: string
+      description: |-
+        * `control` - Nazorat ishi
+        * `practice` - Amaliy ish
+        * `test` - Test
+        * `bsb` - BSB
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        subject:
+          type: string
+        teacher:
+          type: string
+        weekday:
+          allOf:
+          - $ref: '#/components/schemas/WeekdayEnum'
+          minimum: 0
+          maximum: 9223372036854775807
+        weekday_name:
+          type: string
+          readOnly: true
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time
+        room:
+          type: string
+          maxLength: 20
+      required:
+      - end_time
+      - id
+      - start_time
+      - subject
+      - teacher
+      - weekday
+      - weekday_name
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        category_display:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - category_display
+      - created_at
+      - id
+      - text
+      - title
+    PatchedGoal:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        is_done:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedNotification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        category_display:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    StatusEnum:
+      enum:
+      - present
+      - absent
+      - late
+      type: string
+      description: |-
+        * `present` - Keldi
+        * `absent` - Qoldirilgan
+        * `late` - Kechikish
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    WeekdayEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+        * `5` - 5
+        * `6` - 6
+        * `7` - 7
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
