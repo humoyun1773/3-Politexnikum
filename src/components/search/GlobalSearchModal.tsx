@@ -32,7 +32,12 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ open, onOp
       setIsSearching(true);
       try {
         const res = await searchService.search(query);
-        setResults(res);
+        setResults({
+          lessons: res.lessons || [],
+          assignments: res.assignments || [],
+          books: res.books || [],
+          announcements: res.announcements || [],
+        });
       } finally {
         setIsSearching(false);
       }

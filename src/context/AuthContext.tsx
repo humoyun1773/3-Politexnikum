@@ -1,15 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { StudentProfile } from '@/types/api.types';
-import { authService, profileService } from '@/services/student.service';
-import { mockProfile } from '@/data/mockData';
+import { StudentProfile } from '@/types/profile.types';
+import { authService } from '@/services/auth.service';
+import { profileService } from '@/services/profile.service';
 
 interface AuthContextType {
   user: StudentProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  isDemo: boolean;
   login: (credentials: { username: string; password: string }) => Promise<void>;
-  loginAsDemo: () => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -20,21 +18,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<StudentProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isDemo, setIsDemo] = useState<boolean>(false);
 
   const checkAuth = async () => {
     setIsLoading(true);
-    const token = localStorage.getItem('access_token');
-    const demo = localStorage.getItem('demo_mode') === 'true';
+    const token = authService.getStoredAccessToken();
 
     if (token) {
       setIsAuthenticated(true);
-      setIsDemo(demo);
       try {
         const profile = await profileService.getProfile();
         setUser(profile);
-      } catch {
-        setUser(mockProfile);
+      } catch (err: any) {
+        // If 401 or profile fetch failed, token is invalid
+        if (err?.response?.status === 401) {
+          authService.logout();
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       }
     } else {
       setIsAuthenticated(false);
@@ -52,8 +52,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await authService.login(credentials);
       setIsAuthenticated(true);
-      const demo = localStorage.getItem('demo_mode') === 'true';
-      setIsDemo(demo);
       const profile = await profileService.getProfile();
       setUser(profile);
     } finally {
@@ -61,19 +59,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginAsDemo = () => {
-    localStorage.setItem('access_token', 'demo-token-12345');
-    localStorage.setItem('refresh_token', 'demo-refresh-12345');
-    localStorage.setItem('demo_mode', 'true');
-    setIsAuthenticated(true);
-    setIsDemo(true);
-    setUser(mockProfile);
-  };
-
   const logout = () => {
     authService.logout();
     setIsAuthenticated(false);
-    setIsDemo(false);
     setUser(null);
   };
 
@@ -82,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const profile = await profileService.getProfile();
       setUser(profile);
     } catch {
-      // fallback
+      // ignore
     }
   };
 
@@ -92,9 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         isAuthenticated,
         isLoading,
-        isDemo,
         login,
-        loginAsDemo,
         logout,
         refreshUser,
       }}

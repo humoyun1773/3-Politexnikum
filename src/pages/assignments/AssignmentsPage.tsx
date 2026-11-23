@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileCheck2, Clock, Calendar, CheckCircle2, Upload, AlertCircle, ArrowRight } from 'lucide-react';
+import { FileCheck2, Calendar, CheckCircle2, Upload, Inbox, Link as LinkIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +13,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { SEO } from '@/components/common/SEO';
-import { assignmentsService } from '@/services/student.service';
-import { Assignment } from '@/types/api.types';
+import { assignmentsService } from '@/services/assignments.service';
+import { Assignment } from '@/types/assignments.types';
 import { formatDate } from '@/lib/utils';
 
 export const AssignmentsPage: React.FC = () => {
@@ -37,7 +37,7 @@ export const AssignmentsPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await assignmentsService.getAssignments();
-      setAssignments(data);
+      setAssignments(data || []);
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,6 @@ export const AssignmentsPage: React.FC = () => {
         note: submitNote,
       });
       setSubmitSuccess(true);
-      // update state
       setAssignments((prev) =>
         prev.map((a) => (a.id === selectedAssignment.id ? { ...a, submitted: true } : a))
       );
@@ -69,6 +68,8 @@ export const AssignmentsPage: React.FC = () => {
         setSelectedAssignment(null);
         setSubmitSuccess(false);
       }, 1500);
+    } catch {
+      alert("Topshiriqni yuborishda xatolik yuz berdi");
     } finally {
       setIsSubmitting(false);
     }
@@ -96,7 +97,7 @@ export const AssignmentsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       <SEO
         title="Topshiriqlar & Amaliyot"
         description="3-Politexnikum talaba amaliy ishlari, BSB, nazorat topshiriqlari va muddatlari."
@@ -106,15 +107,15 @@ export const AssignmentsPage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Topshiriqlar & BSB</h2>
           <p className="text-sm text-muted-foreground">
-            Fanlar bo'yicha mustaqil ish, amaliy topshiriqlar va nazorat muddatlari
+            Fanlar bo'yicha mustaqil ish, amaliy topshiriqlar va nazorat muddatlari (REST API)
           </p>
         </div>
 
         {/* Filter buttons */}
-        <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl self-start sm:self-auto">
+        <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-2xl self-start sm:self-auto">
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               filter === 'all'
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -124,7 +125,7 @@ export const AssignmentsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setFilter('active')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               filter === 'active'
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -134,7 +135,7 @@ export const AssignmentsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setFilter('submitted')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               filter === 'submitted'
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -152,11 +153,11 @@ export const AssignmentsPage: React.FC = () => {
           Yuklanmoqda...
         </div>
       ) : filteredAssignments.length === 0 ? (
-        <Card className="py-16 text-center">
+        <Card className="py-16 text-center rounded-2xl">
           <CardContent className="space-y-2">
-            <FileCheck2 className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
-            <p className="text-sm font-semibold text-foreground">Ushbu bo'limda topshiriqlar mavjud emas</p>
-            <p className="text-xs text-muted-foreground">Barcha vazifalar o'z vaqtida bajarilgan.</p>
+            <Inbox className="h-10 w-10 text-muted-foreground mx-auto opacity-40" />
+            <p className="text-sm font-semibold text-foreground">Topshiriqlar mavjud emas</p>
+            <p className="text-xs text-muted-foreground">API dan hech qanday vazifa qaytarilmadi.</p>
           </CardContent>
         </Card>
       ) : (
@@ -164,7 +165,7 @@ export const AssignmentsPage: React.FC = () => {
           {filteredAssignments.map((assignment) => (
             <Card
               key={assignment.id}
-              className={`hover:border-primary/50 transition-all shadow-sm ${
+              className={`hover:border-primary/50 transition-all rounded-2xl shadow-sm ${
                 assignment.submitted ? 'bg-card/60' : 'bg-card'
               }`}
             >
@@ -211,13 +212,13 @@ export const AssignmentsPage: React.FC = () => {
 
                   {assignment.submitted ? (
                     <Badge variant="success" className="gap-1 py-1 px-3">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> Tekshirilmoqda
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Qabul qilingan
                     </Badge>
                   ) : (
                     <Button
                       size="sm"
                       variant="default"
-                      className="rounded-lg text-xs gap-1.5 h-8 font-semibold shadow-sm"
+                      className="rounded-xl text-xs gap-1.5 h-8 font-semibold shadow-xs"
                       onClick={() => handleOpenSubmit(assignment)}
                     >
                       <Upload className="h-3.5 w-3.5" /> Topshirish
@@ -233,7 +234,7 @@ export const AssignmentsPage: React.FC = () => {
       {/* Submission Dialog Modal */}
       {selectedAssignment && (
         <Dialog open={!!selectedAssignment} onOpenChange={() => setSelectedAssignment(null)}>
-          <DialogContent className="max-w-md rounded-2xl">
+          <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
               <DialogTitle className="text-lg font-bold">Vazifani topshirish</DialogTitle>
               <DialogDescription className="text-xs">
@@ -248,23 +249,26 @@ export const AssignmentsPage: React.FC = () => {
                 </div>
                 <h4 className="font-bold text-base text-foreground">Topshiriq yuborildi!</h4>
                 <p className="text-xs text-muted-foreground">
-                  O'qituvchi tekshirib chiqqach ballingiz tizimda e'lon qilinadi.
+                  O'qituvchi tekshirib chiqqach natijangiz tizimda e'lon qilinadi.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 pt-2">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Loyiha / Fayl havolasi (GitHub yoki Google Drive)
+                    Loyiha / Fayl havolasi (GitHub yoki Drive)
                   </label>
-                  <Input
-                    type="url"
-                    value={submitFileUrl}
-                    onChange={(e) => setSubmitFileUrl(e.target.value)}
-                    placeholder="https://github.com/humoyun1773/..."
-                    className="h-10 rounded-xl text-xs"
-                    required
-                  />
+                  <div className="relative">
+                    <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="url"
+                      value={submitFileUrl}
+                      onChange={(e) => setSubmitFileUrl(e.target.value)}
+                      placeholder="https://github.com/..."
+                      className="pl-9 h-10 rounded-xl text-xs"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
@@ -274,7 +278,7 @@ export const AssignmentsPage: React.FC = () => {
                   <textarea
                     value={submitNote}
                     onChange={(e) => setSubmitNote(e.target.value)}
-                    placeholder="O'qituvchiga qo'shimcha xabar..."
+                    placeholder="O'qituvchiga xabar..."
                     rows={3}
                     className="w-full rounded-xl border border-input bg-transparent px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                   />

@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Lock, User, ArrowRight, Sparkles, CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import {
+  GraduationCap,
+  Lock,
+  User,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Server,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,13 +25,13 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login, loginAsDemo } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError('Foydalanuvchi nomi va parolni kiriting');
+    if (!username.trim() || !password.trim()) {
+      setError('Foydalanuvchi nomi va parolni to\'liq kiriting');
       return;
     }
 
@@ -29,99 +39,116 @@ export const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      await login({ username, password });
+      await login({ username: username.trim(), password: password.trim() });
       navigate('/dashboard');
-    } catch (err: unknown) {
-      const errorMsg =
-        (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ||
-        "Login yoki parol xato kiritildi. Agar hisobingiz bo'lmasa, quyidagi Demo rejim orqali kiring.";
+    } catch (err: any) {
+      let errorMsg = "Login yoki parol noto'g'ri kiritildi";
+      if (err?.response?.data?.detail) {
+        errorMsg = err.response.data.detail;
+      } else if (err?.response?.data?.username) {
+        errorMsg = Array.isArray(err.response.data.username)
+          ? err.response.data.username[0]
+          : err.response.data.username;
+      } else if (err?.response?.data?.password) {
+        errorMsg = Array.isArray(err.response.data.password)
+          ? err.response.data.password[0]
+          : err.response.data.password;
+      } else if (err?.message === 'Network Error') {
+        errorMsg = "API serverga (169.58.215.170:8090) ulanishda xatolik yuz berdi. Internetni tekshiring.";
+      }
       setError(errorMsg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDemoLogin = () => {
-    loginAsDemo();
-    navigate('/dashboard');
-  };
-
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-background via-card to-background relative overflow-hidden">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-background">
       <SEO
         title="Kirish | Talabalar Portali"
-        description="3-Politexnikum talabalar axborot boshqaruv tizimiga kirish sahifasi."
+        description="3-Politexnikum talabalar axborot boshqaruv tizimiga kirish."
       />
 
-      {/* Background ambient glows */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Atmospheric glowing backdrop orbs */}
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-violet-600/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none" />
 
       {/* Top right theme toggle */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+      <div className="absolute top-5 right-5 z-20">
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 items-center justify-center text-white shadow-xl shadow-blue-500/25 mb-4 transform hover:rotate-6 transition-transform">
-            <GraduationCap className="h-8 w-8" />
+      <div className="w-full max-w-md relative z-10 space-y-6">
+        {/* Brand Title */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex h-16 w-16 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 items-center justify-center text-white shadow-glow-primary shadow-2xl mb-1 transform hover:scale-105 transition-transform duration-300">
+            <GraduationCap className="h-9 w-9" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-            3-Politexnikum
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Talabalar Boshqaruv Portali & Student Hub
-          </p>
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+              3-Politexnikum
+            </h1>
+            <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mt-1">
+              Talabalar Axborot Tizimi Dashboard
+            </p>
+          </div>
         </div>
 
-        <Card className="border-border/80 shadow-2xl backdrop-blur-xl bg-card/90">
-          <CardContent className="pt-6 px-6 sm:px-8 pb-8">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2.5">
-                  <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <div className="flex-1">{error}</div>
-                </div>
-              )}
+        {/* Login Card */}
+        <Card className="border-border/80 shadow-2xl backdrop-blur-2xl bg-card/85 rounded-3xl overflow-hidden">
+          <CardContent className="p-6 sm:p-8 space-y-5">
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-foreground">Tizimga kirish</h2>
+              <p className="text-xs text-muted-foreground">
+                Swagger API (169.58.215.170:8090) orqali avtorizatsiyadan o'ting
+              </p>
+            </div>
 
+            {error && (
+              <div className="p-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-start gap-2.5 animate-in fade-in duration-200">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                <div className="flex-1 font-medium">{error}</div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Foydalanuvchi nomi
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="student yoki username"
-                    className="pl-9 h-10 rounded-xl"
+                    placeholder="Talaba loginini kiriting"
+                    className="pl-10 h-11 rounded-xl text-sm bg-background/50 border-border focus:border-primary focus:ring-primary/20"
                     required
+                    autoFocus
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Parol
-                  </label>
-                </div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Parol
+                </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="pl-9 pr-10 h-10 rounded-xl"
+                    placeholder="Parolingizni kiriting"
+                    className="pl-10 pr-10 h-11 rounded-xl text-sm bg-background/50 border-border focus:border-primary focus:ring-primary/20"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                    className="absolute right-3.5 top-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -131,7 +158,7 @@ export const LoginPage: React.FC = () => {
               <Button
                 type="submit"
                 variant="gradient"
-                className="w-full h-11 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/25 mt-2"
+                className="w-full h-11 rounded-xl text-sm font-semibold shadow-glow-primary shadow-lg mt-2 group"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -141,50 +168,25 @@ export const LoginPage: React.FC = () => {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    Tizimga kirish <ArrowRight className="h-4 w-4" />
+                    Kirish <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 )}
               </Button>
             </form>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/80" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground font-medium">yoki</span>
-              </div>
-            </div>
-
-            {/* Quick Demo Preview Button */}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleDemoLogin}
-              className="w-full h-11 rounded-xl border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary font-medium flex items-center justify-center gap-2"
-            >
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              <span>1-klik bilan Demo rejimda kirish</span>
-            </Button>
-
-            {/* API connection status info */}
-            <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
-              <div className="flex items-center gap-1.5">
+            {/* Server connection indicator */}
+            <div className="pt-4 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-1.5 font-medium">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <Server className="h-3.5 w-3.5 text-muted-foreground" />
                 <span>API: 169.58.215.170:8090</span>
               </div>
-              <span className="font-mono">v1.0 (OpenAPI 3)</span>
+              <span className="flex items-center gap-1 text-emerald-500 font-semibold">
+                <ShieldCheck className="h-3.5 w-3.5" /> SimpleJWT
+              </span>
             </div>
           </CardContent>
         </Card>
-
-        {/* Credentials hints for easy testing */}
-        <div className="mt-4 p-3 rounded-xl bg-muted/40 border border-border/60 text-xs text-muted-foreground space-y-1">
-          <p className="font-semibold text-foreground flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" /> Eslatma:
-          </p>
-          <p>Tizimga Swagger API da mavjud bo'lgan talaba foydalanuvchi hisobi bilan kirish mumkin yoki yuqoridagi <strong>Demo rejim</strong> orqali barcha bo'limlarni testdan o'tkazishingiz mumkin.</p>
-        </div>
       </div>
     </div>
   );

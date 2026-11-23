@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, Sparkles, BookOpen } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Inbox } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SEO } from '@/components/common/SEO';
-import { scheduleService } from '@/services/student.service';
-import { Lesson, WeekdayEnum } from '@/types/api.types';
+import { scheduleService } from '@/services/schedule.service';
+import { Lesson } from '@/types/schedule.types';
 import { formatTime } from '@/lib/utils';
 
 const weekdays = [
@@ -34,16 +33,18 @@ export const SchedulePage: React.FC = () => {
     setLoading(true);
     try {
       const data = await scheduleService.getSchedule(day);
-      setLessons(data);
+      setLessons(data || []);
       const next = await scheduleService.getNextLesson();
-      setNextLesson(next);
+      setNextLesson(next || null);
+    } catch {
+      // ignore
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       <SEO
         title="Dars jadvali"
         description="3-Politexnikum haftalik va kunlik dars jadvali - vaqtlar, xonalar va o'qituvchilar."
@@ -53,19 +54,21 @@ export const SchedulePage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Dars jadvali</h2>
           <p className="text-sm text-muted-foreground">
-            2026-yil Kuzgi semestr dars mashg'ulotlari jadvali (Guruh: AT-21/1)
+            Dars mashg'ulotlari, xonalar va vaqtlar jadvali (Swagger REST API)
           </p>
         </div>
 
         {nextLesson && (
-          <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 flex items-center gap-3 shadow-xs">
+            <div className="h-9 w-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
               <Clock className="h-5 w-5" />
             </div>
             <div className="text-xs">
               <span className="font-semibold text-primary block">Keyingi dars:</span>
-              <span className="text-foreground font-medium">{nextLesson.subject}</span>
-              <span className="text-muted-foreground ml-1.5 font-mono">({formatTime(nextLesson.start_time)})</span>
+              <span className="text-foreground font-bold">{nextLesson.subject}</span>
+              <span className="text-muted-foreground ml-1.5 font-mono">
+                ({formatTime(nextLesson.start_time)})
+              </span>
             </div>
           </div>
         )}
@@ -92,7 +95,7 @@ export const SchedulePage: React.FC = () => {
       </div>
 
       {/* Lessons List */}
-      <Card className="shadow-sm">
+      <Card className="shadow-sm rounded-2xl">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-bold flex items-center gap-2">
@@ -100,11 +103,11 @@ export const SchedulePage: React.FC = () => {
               {weekdays.find((d) => d.id === selectedDay)?.name} kungi darslar
             </CardTitle>
             <Badge variant="secondary" className="text-xs">
-              {lessons.length} ta mashg'ulot
+              {lessons.length} ta dars
             </Badge>
           </div>
           <CardDescription className="text-xs">
-            Mashg'ulotlar 80 daqiqa davom etadi. Darsga kechikmasdan kelish so'raladi.
+            Mashg'ulotlar 80 daqiqa davom etadi. Darsga kechikmasdan qatnashish lozim.
           </CardDescription>
         </CardHeader>
 
@@ -115,8 +118,9 @@ export const SchedulePage: React.FC = () => {
               Yuklanmoqda...
             </div>
           ) : lessons.length === 0 ? (
-            <div className="py-12 text-center text-sm text-muted-foreground">
-              Ushbu kunga darslar belgilanmagan (Dam olish kuni).
+            <div className="py-12 text-center text-xs text-muted-foreground flex flex-col items-center justify-center space-y-2">
+              <Inbox className="h-8 w-8 opacity-40" />
+              <p>Ushbu kunga darslar belgilanmagan.</p>
             </div>
           ) : (
             lessons.map((lesson, index) => (
@@ -137,10 +141,12 @@ export const SchedulePage: React.FC = () => {
                         <User className="h-3.5 w-3.5 text-blue-500" />
                         {lesson.teacher}
                       </span>
-                      <span className="flex items-center gap-1 font-mono">
-                        <MapPin className="h-3.5 w-3.5 text-rose-500" />
-                        Xona: {lesson.room || 'Noma\'lum'}
-                      </span>
+                      {lesson.room && (
+                        <span className="flex items-center gap-1 font-mono">
+                          <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                          Xona: {lesson.room}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Download, Search, FileText, ExternalLink, Bookmark } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { BookOpen, Download, Search, Inbox } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { SEO } from '@/components/common/SEO';
-import { libraryService } from '@/services/student.service';
-import { Book } from '@/types/api.types';
+import { libraryService } from '@/services/library.service';
+import { Book } from '@/types/library.types';
 
 export const LibraryPage: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -18,9 +18,10 @@ export const LibraryPage: React.FC = () => {
   }, []);
 
   const loadBooks = async () => {
+    setLoading(true);
     try {
       const data = await libraryService.getBooks();
-      setBooks(data);
+      setBooks(data || []);
     } finally {
       setLoading(false);
     }
@@ -34,7 +35,7 @@ export const LibraryPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-300">
       <SEO
         title="Elektron kutubxona"
         description="3-Politexnikum elektron darsliklari, o'quv qo'llanmalari va dasturlash bo'yicha ilmiy manbalar."
@@ -44,7 +45,7 @@ export const LibraryPage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Elektron kutubxona</h2>
           <p className="text-sm text-muted-foreground">
-            O'quv qo'llanmalari, darsliklar va texnik adabiyotlar arxivi
+            O'quv qo'llanmalari, darsliklar va texnik adabiyotlar arxivi (Swagger API)
           </p>
         </div>
 
@@ -54,19 +55,23 @@ export const LibraryPage: React.FC = () => {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Kitob yoki muallif nomi..."
-            className="pl-9 h-10 text-xs rounded-xl"
+            placeholder="Kitob yoki muallif..."
+            className="pl-9 h-10 text-xs rounded-xl bg-background/50"
           />
         </div>
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-xs text-muted-foreground">Yuklanmoqda...</div>
+        <div className="py-16 text-center text-xs text-muted-foreground flex justify-center items-center gap-2">
+          <div className="h-5 w-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          Yuklanmoqda...
+        </div>
       ) : filteredBooks.length === 0 ? (
-        <Card className="py-16 text-center">
-          <CardContent>
-            <BookOpen className="h-10 w-10 text-muted-foreground mx-auto opacity-50 mb-2" />
-            <p className="text-sm font-semibold">Kitoblar topilmadi</p>
+        <Card className="py-16 text-center rounded-2xl">
+          <CardContent className="space-y-2">
+            <Inbox className="h-10 w-10 text-muted-foreground mx-auto opacity-40" />
+            <p className="text-sm font-semibold text-foreground">Kitoblar topilmadi</p>
+            <p className="text-xs text-muted-foreground">Hozircha kutubxona bazasida darsliklar mavjud emas.</p>
           </CardContent>
         </Card>
       ) : (
@@ -74,7 +79,7 @@ export const LibraryPage: React.FC = () => {
           {filteredBooks.map((book) => (
             <Card
               key={book.id}
-              className="overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all group shadow-sm"
+              className="overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all rounded-2xl group shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               <div>
                 {/* Book Cover */}
@@ -102,11 +107,6 @@ export const LibraryPage: React.FC = () => {
                     {book.title}
                   </h4>
                   <p className="text-xs text-muted-foreground line-clamp-1">{book.author}</p>
-                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground pt-1">
-                    <span>{book.pages || 350} sahifa</span>
-                    <span>•</span>
-                    <span>{book.download_count || 120} marta yuklangan</span>
-                  </div>
                 </CardContent>
               </div>
 

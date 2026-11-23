@@ -65,11 +65,12 @@ export const Header: React.FC<HeaderProps> = ({
   const loadNotifications = async () => {
     try {
       const data = await notificationsService.getNotifications();
-      setNotifications(data);
+      setNotifications(Array.isArray(data) ? data : []);
       const count = await notificationsService.getUnreadCount();
-      setUnreadCount(count);
+      setUnreadCount(typeof count === 'number' ? count : 0);
     } catch {
-      // fallback
+      setNotifications([]);
+      setUnreadCount(0);
     }
   };
 
