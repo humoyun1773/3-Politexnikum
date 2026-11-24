@@ -1,8 +1,1 @@
-export interface Grade {
-  id: number;
-  subject: string;
-  score: number;
-  date: string;
-  type?: string;
-  teacher?: string;
-}
+export type { Grade } from './openapi.types';

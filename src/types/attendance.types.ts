@@ -1,12 +1,4 @@
-export type StatusEnum = 'present' | 'absent' | 'late';
-
-export interface AttendanceItem {
-  id: number;
-  subject: string;
-  date: string;
-  status: StatusEnum;
-  status_display: string;
-}
+export type { StatusEnum, AttendanceItem } from './openapi.types';
 
 export interface AttendanceSummary {
   total_lessons: number;

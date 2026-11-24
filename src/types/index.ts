@@ -1,3 +1,5 @@
+export * as OpenAPI from './openapi.types';
+export * from './openapi.types';
 export * from './auth.types';
 export * from './schedule.types';
 export * from './grades.types';

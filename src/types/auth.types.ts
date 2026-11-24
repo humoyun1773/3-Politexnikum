@@ -1,6 +1,8 @@
+export type { TokenObtainPair, TokenRefresh } from './openapi.types';
+
 export interface TokenObtainPairRequest {
   username: string;
-  password: string;
+  password?: string;
 }
 
 export interface TokenObtainPairResponse {

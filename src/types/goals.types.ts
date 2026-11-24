@@ -1,9 +1,4 @@
-export interface Goal {
-  id: number;
-  title: string;
-  is_done: boolean;
-  created_at: string;
-}
+export type { Goal, PatchedGoal } from './openapi.types';
 
 export interface CreateGoalPayload {
   title: string;

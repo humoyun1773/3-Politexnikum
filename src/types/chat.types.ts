@@ -1,12 +1,4 @@
-export interface ChatMessage {
-  id: number;
-  sender: number;
-  sender_name: string;
-  text: string;
-  created_at: string;
-  avatar?: string;
-  is_me?: boolean;
-}
+export type { ChatMessage } from './openapi.types';
 
 export interface SendChatMessagePayload {
   text: string;
