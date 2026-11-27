@@ -76,15 +76,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={cn(
-        'flex flex-col h-full bg-white/95 dark:bg-[#0B0716]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-violet-500/20 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-xs dark:shadow-[5px_0_30px_rgba(0,0,0,0.5)]',
+        'flex flex-col h-full bg-white dark:bg-[#0E081E] border-r-2 border-slate-200/90 dark:border-violet-500/35 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-[5px_0_25px_rgba(0,0,0,0.05)] dark:shadow-[6px_0_35px_rgba(0,0,0,0.7)]',
         collapsed ? 'w-20' : 'w-64',
         className
       )}
     >
+      {/* Right Edge Neon Accent Strip */}
+      <div className="absolute top-0 right-0 bottom-0 w-[1.5px] bg-gradient-to-b from-violet-500/10 via-violet-500/50 to-purple-500/10 pointer-events-none" />
+
       {/* Brand Header */}
       <div
         className={cn(
-          'h-16 flex items-center border-b border-slate-200/80 dark:border-violet-500/20 transition-all',
+          'h-16 flex items-center bg-slate-50/90 dark:bg-[#130B29] border-b-2 border-slate-200/90 dark:border-violet-500/25 transition-all',
           collapsed ? 'justify-center px-2' : 'justify-between px-5'
         )}
       >
@@ -222,7 +225,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       {/* User Footer Card */}
-      <div className={cn('border-t border-slate-200/80 dark:border-violet-500/20 mt-auto bg-slate-50/70 dark:bg-[#120B22]/70 backdrop-blur-md transition-all', collapsed ? 'p-2' : 'p-3')}>
+      <div className={cn('border-t-2 border-slate-200/90 dark:border-violet-500/25 mt-auto bg-slate-50/90 dark:bg-[#130B29] transition-all', collapsed ? 'p-2' : 'p-3')}>
         {collapsed ? (
           <div className="flex flex-col items-center gap-2">
             <NavLink
@@ -236,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {user?.first_name?.[0] || 'T'}
                 </AvatarFallback>
               </Avatar>
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#120B22]" />
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#130B29]" />
             </NavLink>
             <button
               onClick={handleLogout}
@@ -247,7 +250,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
         ) : (
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-[#18112C] border border-slate-200/80 dark:border-violet-500/25 shadow-xs">
+          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-[#181132] border border-slate-200/90 dark:border-violet-500/30 shadow-xs">
             <NavLink to="/profile" className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-90 transition-opacity">
               <div className="relative shrink-0">
                 <Avatar className="h-9 w-9 ring-2 ring-violet-500/30">
