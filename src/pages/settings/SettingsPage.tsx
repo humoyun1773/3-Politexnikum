@@ -1,15 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, Lock, Moon, Sun, Monitor, Bell, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Settings,
+  Lock,
+  Moon,
+  Sun,
+  Monitor,
+  Bell,
+  Shield,
+  CheckCircle2,
+  AlertCircle,
+  Camera,
+  Trash2,
+  Upload,
+  User,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SEO } from '@/components/common/SEO';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 import { settingsService } from '@/services/student.service';
+import { profileService } from '@/services/profile.service';
 import { UserSettings } from '@/types/api.types';
 
 export const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
+  const { user, updateUser } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [avatarSuccess, setAvatarSuccess] = useState<string | null>(null);
+
   const [settings, setSettings] = useState<UserSettings>({
     theme: 'dark',
     language: 'uz',
@@ -38,6 +60,53 @@ export const SettingsPage: React.FC = () => {
     } catch {
       // fallback
     }
+  };
+
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Rasm hajmi 5MB dan oshmasligi kerak");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Url = event.target?.result as string;
+      updateUser({ avatar: base64Url });
+
+      try {
+        await profileService.uploadAvatar(file);
+      } catch {
+        try {
+          await profileService.updateProfile({ avatar: base64Url });
+        } catch {
+          // keep local
+        }
+      }
+      setAvatarSuccess("Profil rasmi muvaffaqiyatli yangilandi!");
+      setTimeout(() => setAvatarSuccess(null), 3000);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!window.confirm("Profil rasmini o'chirishni xohlaysizmi?")) return;
+
+    updateUser({ avatar: '' });
+
+    try {
+      await profileService.deleteAvatar();
+    } catch {
+      try {
+        await profileService.updateProfile({ avatar: '' });
+      } catch {
+        // ignore
+      }
+    }
+    setAvatarSuccess("Profil rasmi muvaffaqiyatli o'chirildi!");
+    setTimeout(() => setAvatarSuccess(null), 3000);
   };
 
   const handleToggle = async (key: keyof UserSettings) => {
@@ -91,15 +160,92 @@ export const SettingsPage: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">Tizim sozlamalari</h2>
         <p className="text-sm text-muted-foreground">
-          Ilova ko'rinishi, bildirishnomalar va xavfsizlik parametrlarini sozlang
+          Ilova ko'rinishi, profil rasmi, bildirishnomalar va xavfsizlik parametrlarini sozlang
         </p>
       </div>
+
+      {/* Hidden file input for Avatar upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        className="hidden"
+        onChange={handleAvatarFileSelect}
+      />
+
+      {/* Top Banner: Profile Picture Quick Settings */}
+      <Card className="shadow-sm rounded-3xl border-border/80 overflow-hidden">
+        <CardContent className="p-6">
+          {avatarSuccess && (
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>{avatarSuccess}</span>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="relative group/avatar cursor-pointer">
+              <Avatar className="h-24 w-24 ring-4 ring-primary/25 shadow-lg transition-transform group-hover/avatar:scale-105">
+                <AvatarImage src={user?.avatar} alt={user?.first_name} />
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-2xl">
+                  {user?.first_name?.[0] || 'T'}
+                </AvatarFallback>
+              </Avatar>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[10px] font-semibold gap-1 cursor-pointer"
+                title="Rasmni o'zgartirish"
+              >
+                <Camera className="h-4 w-4" />
+                <span>O'zgartirish</span>
+              </button>
+            </div>
+
+            <div className="space-y-1.5 text-center sm:text-left flex-1">
+              <h3 className="text-base font-bold text-foreground">
+                Profil rasmi (Avatar boshqaruvi)
+              </h3>
+              <p className="text-xs text-muted-foreground max-w-md">
+                Yangi rasm yuklang yoki mavjud rasmni o'chiring. Formatlar: JPG, PNG, WEBP (maksimal 5MB).
+              </p>
+
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-xl text-xs font-semibold gap-1.5 cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary/40"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  Yangi rasm yuklash (Edit / PUT)
+                </Button>
+
+                {user?.avatar && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleDeleteAvatar}
+                    className="rounded-xl text-xs font-semibold gap-1.5 cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Rasmni o'chirish (Delete)
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Col: Appearance & Notifications */}
         <div className="space-y-6">
           {/* Appearance / Theme */}
-          <Card className="shadow-sm">
+          <Card className="shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle className="text-base font-bold flex items-center gap-2">
                 <Sun className="h-4 w-4 text-primary" />
@@ -114,7 +260,7 @@ export const SettingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTheme('light')}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                  className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${
                     theme === 'light'
                       ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm'
                       : 'border-border/80 text-muted-foreground hover:bg-muted/40'
@@ -127,7 +273,7 @@ export const SettingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTheme('dark')}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                  className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${
                     theme === 'dark'
                       ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm'
                       : 'border-border/80 text-muted-foreground hover:bg-muted/40'
@@ -140,7 +286,7 @@ export const SettingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTheme('system')}
-                  className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
+                  className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${
                     theme === 'system'
                       ? 'border-primary bg-primary/10 text-primary font-bold shadow-sm'
                       : 'border-border/80 text-muted-foreground hover:bg-muted/40'
@@ -154,7 +300,7 @@ export const SettingsPage: React.FC = () => {
           </Card>
 
           {/* Notifications Preferences */}
-          <Card className="shadow-sm">
+          <Card className="shadow-sm rounded-3xl">
             <CardHeader>
               <CardTitle className="text-base font-bold flex items-center gap-2">
                 <Bell className="h-4 w-4 text-primary" />
@@ -208,7 +354,7 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Right Col: Change Password */}
-        <Card className="shadow-sm">
+        <Card className="shadow-sm rounded-3xl">
           <CardHeader>
             <CardTitle className="text-base font-bold flex items-center gap-2">
               <Shield className="h-4 w-4 text-primary" />

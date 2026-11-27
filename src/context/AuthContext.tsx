@@ -29,6 +29,7 @@ interface AuthContextType {
   loginAsDemo: () => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  updateUser: (updatedData: Partial<StudentProfile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,7 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token) {
       setIsAuthenticated(true);
       if (isDemo) {
-        setUser(DEMO_USER);
+        const savedDemo = localStorage.getItem('demo_user_profile');
+        setUser(savedDemo ? JSON.parse(savedDemo) : DEMO_USER);
         setIsLoading(false);
         return;
       }
@@ -60,7 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(null);
         } else {
           // Fallback to demo user if backend is offline
-          setUser(DEMO_USER);
+          const savedDemo = localStorage.getItem('demo_user_profile');
+          setUser(savedDemo ? JSON.parse(savedDemo) : DEMO_USER);
         }
       }
     } else {
@@ -80,7 +83,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('access_token', 'demo_access_token_3politexnikum');
       localStorage.setItem('refresh_token', 'demo_refresh_token_3politexnikum');
       localStorage.setItem('is_demo_mode', 'true');
-      setUser(DEMO_USER);
+      const savedDemo = localStorage.getItem('demo_user_profile');
+      setUser(savedDemo ? JSON.parse(savedDemo) : DEMO_USER);
       setIsAuthenticated(true);
     } finally {
       setIsLoading(false);
@@ -89,7 +93,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (credentials: { username: string; password: string }) => {
     setIsLoading(true);
-    // If username is "demo", directly login as demo
     if (credentials.username.toLowerCase() === 'demo') {
       await loginAsDemo();
       return;
@@ -108,6 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     localStorage.removeItem('is_demo_mode');
+    localStorage.removeItem('demo_user_profile');
     authService.logout();
     setIsAuthenticated(false);
     setUser(null);
@@ -115,7 +119,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = async () => {
     if (localStorage.getItem('is_demo_mode') === 'true') {
-      setUser(DEMO_USER);
+      const savedDemo = localStorage.getItem('demo_user_profile');
+      setUser(savedDemo ? JSON.parse(savedDemo) : DEMO_USER);
       return;
     }
     try {
@@ -124,6 +129,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       // ignore
     }
+  };
+
+  const updateUser = (updatedData: Partial<StudentProfile>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, ...updatedData };
+      if (localStorage.getItem('is_demo_mode') === 'true') {
+        localStorage.setItem('demo_user_profile', JSON.stringify(updated));
+      }
+      return updated;
+    });
   };
 
   return (
@@ -136,6 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginAsDemo,
         logout,
         refreshUser,
+        updateUser,
       }}
     >
       {children}

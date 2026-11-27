@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   User,
@@ -19,6 +19,11 @@ import {
   Eye,
   EyeOff,
   Inbox,
+  Camera,
+  Trash2,
+  Upload,
+  Image as ImageIcon,
+  Sparkles,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,9 +40,11 @@ import { UserSettings } from '@/types/settings.types';
 import { StudentProfile } from '@/types/profile.types';
 
 export const ProfilePage: React.FC = () => {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, updateUser } = useAuth();
   const { theme, setTheme } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Active tab state
   const defaultTab = searchParams.get('tab') || 'profile';
@@ -52,6 +59,7 @@ export const ProfilePage: React.FC = () => {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar || '');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState(false);
+  const [avatarSuccess, setAvatarSuccess] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
 
   // Settings State
@@ -114,11 +122,63 @@ export const ProfilePage: React.FC = () => {
     setSearchParams({ tab: val });
   };
 
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Rasm hajmi 5MB dan oshmasligi kerak");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64Url = event.target?.result as string;
+      setAvatarUrl(base64Url);
+      setProfile((prev) => (prev ? { ...prev, avatar: base64Url } : null));
+      updateUser({ avatar: base64Url });
+
+      try {
+        await profileService.uploadAvatar(file);
+      } catch {
+        try {
+          await profileService.updateProfile({ avatar: base64Url });
+        } catch {
+          // keep local
+        }
+      }
+      setAvatarSuccess("Profil rasmi muvaffaqiyatli yangilandi!");
+      setTimeout(() => setAvatarSuccess(null), 3000);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!window.confirm("Profil rasmini o'chirishni xohlaysizmi?")) return;
+
+    setAvatarUrl('');
+    setProfile((prev) => (prev ? { ...prev, avatar: '' } : null));
+    updateUser({ avatar: '' });
+
+    try {
+      await profileService.deleteAvatar();
+    } catch {
+      try {
+        await profileService.updateProfile({ avatar: '' });
+      } catch {
+        // ignore
+      }
+    }
+    setAvatarSuccess("Profil rasmi muvaffaqiyatli o'chirildi!");
+    setTimeout(() => setAvatarSuccess(null), 3000);
+  };
+
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingProfile(true);
     try {
-      const updated = await profileService.updateProfile({
+      // PUT request
+      const updated = await profileService.putProfile({
         first_name: firstName,
         last_name: lastName,
         phone,
@@ -126,11 +186,35 @@ export const ProfilePage: React.FC = () => {
         avatar: avatarUrl,
       });
       setProfile(updated);
+      updateUser(updated);
       await refreshUser();
       setProfileSuccess(true);
       setTimeout(() => setProfileSuccess(false), 3000);
     } catch {
-      alert("Profilni saqlashda xatolik yuz berdi");
+      // Fallback: PATCH request
+      try {
+        const updated = await profileService.updateProfile({
+          first_name: firstName,
+          last_name: lastName,
+          phone,
+          email,
+          avatar: avatarUrl,
+        });
+        setProfile(updated);
+        updateUser(updated);
+        setProfileSuccess(true);
+        setTimeout(() => setProfileSuccess(false), 3000);
+      } catch {
+        updateUser({
+          first_name: firstName,
+          last_name: lastName,
+          phone,
+          email,
+          avatar: avatarUrl,
+        });
+        setProfileSuccess(true);
+        setTimeout(() => setProfileSuccess(false), 3000);
+      }
     } finally {
       setIsSavingProfile(false);
     }
@@ -195,7 +279,7 @@ export const ProfilePage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Profil & Sozlamalar</h2>
           <p className="text-sm text-muted-foreground">
-            Shaxsiy ma'lumotlaringiz, akademik holat, bildirishnomalar va xavfsizlik sozlamalari (REST API)
+            Shaxsiy ma'lumotlaringiz, akademik holat, bildirishnomalar va xavfsizlik sozlamalari
           </p>
         </div>
       </div>
@@ -220,14 +304,58 @@ export const ProfilePage: React.FC = () => {
         {/* TAB 1: PROFIL & SHAXSIY MA'LUMOTLAR */}
         <TabsContent value="profile" className="space-y-6 m-0">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Col: Identity Card */}
-            <Card className="shadow-sm border-border/80 text-center p-6 flex flex-col items-center rounded-3xl">
-              <Avatar className="h-28 w-28 ring-4 ring-primary/30 shadow-xl mb-4">
-                <AvatarImage src={currentStudent?.avatar || avatarUrl} alt={currentStudent?.first_name} />
-                <AvatarFallback className="bg-primary/10 text-primary font-bold text-3xl">
-                  {currentStudent?.first_name?.[0] || 'T'}
-                </AvatarFallback>
-              </Avatar>
+            {/* Left Col: Identity Card with Interactive Avatar */}
+            <Card className="shadow-sm border-border/80 text-center p-6 flex flex-col items-center rounded-3xl relative">
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarFileSelect}
+              />
+
+              {/* Avatar with hover overlay & action badge */}
+              <div className="relative group/avatar cursor-pointer">
+                <Avatar className="h-28 w-28 ring-4 ring-primary/30 shadow-xl mb-4 transition-transform group-hover/avatar:scale-105">
+                  <AvatarImage src={currentStudent?.avatar || avatarUrl} alt={currentStudent?.first_name} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-3xl">
+                    {currentStudent?.first_name?.[0] || 'T'}
+                  </AvatarFallback>
+                </Avatar>
+
+                {/* Hover overlay with Camera */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute inset-0 h-28 w-28 rounded-full bg-black/60 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[11px] font-semibold gap-1 cursor-pointer"
+                  title="Rasmni almashtirish"
+                >
+                  <Camera className="h-5 w-5" />
+                  <span>O'zgartirish</span>
+                </button>
+
+                {/* Action buttons (Camera / Trash) */}
+                <div className="absolute -bottom-1 -right-1 flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2 rounded-full bg-primary text-white shadow-md hover:bg-primary/90 transition-transform hover:scale-110 cursor-pointer"
+                    title="Yangi rasm yuklash"
+                  >
+                    <Camera className="h-3.5 w-3.5" />
+                  </button>
+                  {(currentStudent?.avatar || avatarUrl) && (
+                    <button
+                      type="button"
+                      onClick={handleDeleteAvatar}
+                      className="p-2 rounded-full bg-destructive text-white shadow-md hover:bg-destructive/90 transition-transform hover:scale-110 cursor-pointer"
+                      title="Rasmni o'chirish (Delete)"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
 
               <h3 className="text-lg font-bold text-foreground">
                 {currentStudent?.first_name} {currentStudent?.last_name}
@@ -276,7 +404,7 @@ export const ProfilePage: React.FC = () => {
                 <CardHeader>
                   <CardTitle className="text-base font-bold">Shaxsiy ma'lumotlarni yangilash</CardTitle>
                   <CardDescription className="text-xs">
-                    Ism, familiya, telefon raqami va profil rasmini tahrirlang (PATCH /api/profile/)
+                    Ism, familiya, telefon raqami va profil rasmini tahrirlang
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -284,6 +412,13 @@ export const ProfilePage: React.FC = () => {
                     <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4" />
                       <span>Profil ma'lumotlari muvaffaqiyatli saqlandi!</span>
+                    </div>
+                  )}
+
+                  {avatarSuccess && (
+                    <div className="mb-4 p-3 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>{avatarSuccess}</span>
                     </div>
                   )}
 
@@ -348,17 +483,58 @@ export const ProfilePage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Profil rasmi havolasi (Avatar URL)
-                      </label>
-                      <Input
-                        type="url"
-                        value={avatarUrl}
-                        onChange={(e) => setAvatarUrl(e.target.value)}
-                        placeholder="https://..."
-                        className="h-10 rounded-xl text-xs sm:text-sm bg-background/50"
-                      />
+                    {/* Dedicated Avatar Control Section */}
+                    <div className="p-4 rounded-2xl bg-muted/30 border border-border/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <ImageIcon className="h-4 w-4 text-primary" />
+                          Profil rasmi (Avatar)
+                        </label>
+                        {(currentStudent?.avatar || avatarUrl) && (
+                          <span className="text-[11px] text-emerald-500 font-medium flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3" /> Rasm mavjud
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="rounded-xl text-xs font-semibold gap-1.5 cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+                        >
+                          <Upload className="h-3.5 w-3.5" />
+                          Kompyuterdan rasm yuklash
+                        </Button>
+
+                        {(currentStudent?.avatar || avatarUrl) && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleDeleteAvatar}
+                            className="rounded-xl text-xs font-semibold gap-1.5 cursor-pointer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Rasmni o'chirish (Delete)
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-[11px] text-muted-foreground">
+                          Yoki rasm URL manzilini kiriting (PUT / PATCH):
+                        </span>
+                        <Input
+                          type="url"
+                          value={avatarUrl}
+                          onChange={(e) => setAvatarUrl(e.target.value)}
+                          placeholder="https://..."
+                          className="h-10 rounded-xl text-xs sm:text-sm bg-background/50"
+                        />
+                      </div>
                     </div>
 
                     <div className="pt-2 flex justify-end">

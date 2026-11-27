@@ -32,9 +32,9 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className }) => {
       )} />
 
       {isDark ? (
-        <Sun className="h-5 w-5 text-amber-400 fill-amber-400/30 transition-transform duration-500 transform group-hover:rotate-90 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)]" />
+        <Sun className="h-5 w-5 text-amber-400 fill-amber-400/30 transition-transform duration-300 transform group-hover:scale-110 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)]" />
       ) : (
-        <Moon className="h-5 w-5 text-violet-600 fill-violet-600/25 transition-transform duration-500 transform group-hover:-rotate-12 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(124,58,237,0.5)]" />
+        <Moon className="h-5 w-5 text-violet-600 fill-violet-600/25 transition-transform duration-300 transform group-hover:scale-110 drop-shadow-[0_0_8px_rgba(124,58,237,0.5)]" />
       )}
     </button>
   );
