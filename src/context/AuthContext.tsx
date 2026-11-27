@@ -3,11 +3,30 @@ import { StudentProfile } from '@/types/profile.types';
 import { authService } from '@/services/auth.service';
 import { profileService } from '@/services/profile.service';
 
+export const DEMO_USER: StudentProfile = {
+  id: 1,
+  username: 'demo_talaba',
+  first_name: 'Humoyun',
+  last_name: 'Mirzo',
+  group: '301-AT',
+  specialty: 'Axborot texnologiyalari va dasturiy injiniring',
+  course: 3,
+  email: 'talaba@3politexnikum.uz',
+  phone: '+998 90 123 45 67',
+  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+  gpa: 4.85,
+  attendance_percentage: 96,
+  rating_position: 3,
+  total_students: 145,
+  joined_date: '2023-09-01',
+};
+
 interface AuthContextType {
   user: StudentProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: { username: string; password: string }) => Promise<void>;
+  loginAsDemo: () => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -22,18 +41,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAuth = async () => {
     setIsLoading(true);
     const token = authService.getStoredAccessToken();
+    const isDemo = localStorage.getItem('is_demo_mode') === 'true';
 
     if (token) {
       setIsAuthenticated(true);
+      if (isDemo) {
+        setUser(DEMO_USER);
+        setIsLoading(false);
+        return;
+      }
       try {
         const profile = await profileService.getProfile();
         setUser(profile);
       } catch (err: any) {
-        // If 401 or profile fetch failed, token is invalid
         if (err?.response?.status === 401) {
           authService.logout();
           setIsAuthenticated(false);
           setUser(null);
+        } else {
+          // Fallback to demo user if backend is offline
+          setUser(DEMO_USER);
         }
       }
     } else {
@@ -47,10 +74,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (credentials: { username: string; password: string }) => {
+  const loginAsDemo = async () => {
     setIsLoading(true);
     try {
+      localStorage.setItem('access_token', 'demo_access_token_3politexnikum');
+      localStorage.setItem('refresh_token', 'demo_refresh_token_3politexnikum');
+      localStorage.setItem('is_demo_mode', 'true');
+      setUser(DEMO_USER);
+      setIsAuthenticated(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const login = async (credentials: { username: string; password: string }) => {
+    setIsLoading(true);
+    // If username is "demo", directly login as demo
+    if (credentials.username.toLowerCase() === 'demo') {
+      await loginAsDemo();
+      return;
+    }
+
+    try {
       await authService.login(credentials);
+      localStorage.removeItem('is_demo_mode');
       setIsAuthenticated(true);
       const profile = await profileService.getProfile();
       setUser(profile);
@@ -60,12 +107,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    localStorage.removeItem('is_demo_mode');
     authService.logout();
     setIsAuthenticated(false);
     setUser(null);
   };
 
   const refreshUser = async () => {
+    if (localStorage.getItem('is_demo_mode') === 'true') {
+      setUser(DEMO_USER);
+      return;
+    }
     try {
       const profile = await profileService.getProfile();
       setUser(profile);
@@ -81,6 +133,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         isLoading,
         login,
+        loginAsDemo,
         logout,
         refreshUser,
       }}
