@@ -53,8 +53,8 @@ export const DashboardLayout: React.FC = () => {
   const title = getPageTitle(location.pathname);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#EFEFF6] dark:bg-[#06030B] p-2.5 sm:p-3.5 gap-2.5 sm:gap-3.5 transition-colors duration-200">
-      {/* Desktop Collapsible Floating Rounded Sidebar */}
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-100/80 dark:bg-zinc-950 p-2 sm:p-3 gap-2 sm:gap-3 transition-colors duration-200">
+      {/* Desktop Collapsible Rounded Sidebar */}
       <Sidebar
         collapsed={isCollapsed}
         onToggleCollapse={handleToggleSidebar}
@@ -63,15 +63,15 @@ export const DashboardLayout: React.FC = () => {
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex p-2.5">
+        <div className="fixed inset-0 z-50 md:hidden flex p-2">
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative z-50 flex flex-col w-72 max-w-[82vw] h-full rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-left duration-200">
+          <div className="relative z-50 flex flex-col w-72 max-w-[82vw] h-full rounded-2xl overflow-hidden shadow-2xl animate-in slide-in-from-left duration-200">
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 z-20 cursor-pointer"
+              className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-muted-foreground hover:bg-muted z-20 cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
@@ -85,7 +85,7 @@ export const DashboardLayout: React.FC = () => {
       )}
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden gap-2.5 sm:gap-3.5">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden gap-2 sm:gap-3">
         <Header
           onToggleMobileMenu={() => setMobileMenuOpen(true)}
           onToggleSidebar={handleToggleSidebar}

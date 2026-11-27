@@ -13,10 +13,8 @@ import {
   Target,
   User,
   LogOut,
-  ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
-  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
@@ -29,33 +27,18 @@ interface SidebarProps {
   onNavigate?: () => void;
 }
 
-export const navigationSections = [
-  {
-    title: 'ASOSIY',
-    items: [
-      { name: 'Boshqaruv paneli', path: '/dashboard', icon: LayoutDashboard },
-      { name: 'Dars jadvali', path: '/schedule', icon: Calendar },
-      { name: "O'zlashtirish & Baholar", path: '/grades', icon: GraduationCap },
-      { name: 'Davomat jurnali', path: '/attendance', icon: ClipboardCheck },
-      { name: 'Topshiriqlar', path: '/assignments', icon: FileCheck2 },
-    ],
-  },
-  {
-    title: "IJTIMOIY & O'QUV",
-    items: [
-      { name: 'Talabalar reytingi', path: '/rating', icon: Trophy },
-      { name: 'Guruh muloqoti', path: '/chat', icon: MessageSquare, badge: 'Chat' },
-      { name: 'Elektron kutubxona', path: '/library', icon: BookOpen },
-      { name: "E'lonlar", path: '/announcements', icon: Bell },
-    ],
-  },
-  {
-    title: 'SHAXSIY',
-    items: [
-      { name: 'Maqsadlar', path: '/goals', icon: Target },
-      { name: 'Profil & Sozlamalar', path: '/profile', icon: User },
-    ],
-  },
+export const navigationItems = [
+  { name: 'Boshqaruv paneli', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'Dars jadvali', path: '/schedule', icon: Calendar },
+  { name: "Baholar & O'zlashtirish", path: '/grades', icon: GraduationCap },
+  { name: 'Davomat', path: '/attendance', icon: ClipboardCheck },
+  { name: 'Topshiriqlar', path: '/assignments', icon: FileCheck2 },
+  { name: 'Talabalar reytingi', path: '/rating', icon: Trophy },
+  { name: 'Guruh muloqoti', path: '/chat', icon: MessageSquare },
+  { name: 'Elektron kutubxona', path: '/library', icon: BookOpen },
+  { name: "E'lonlar", path: '/announcements', icon: Bell },
+  { name: 'Maqsadlar', path: '/goals', icon: Target },
+  { name: 'Profil & Sozlamalar', path: '/profile', icon: User },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -76,60 +59,54 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={cn(
-        'flex flex-col h-full bg-white dark:bg-[#0E081E] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-violet-500/30 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_40px_-5px_rgba(0,0,0,0.65)]',
-        collapsed ? 'w-20' : 'w-64',
+        'flex flex-col h-full bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-zinc-800 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-sm',
+        collapsed ? 'w-[72px]' : 'w-64',
         className
       )}
     >
       {/* Brand Header */}
       <div
         className={cn(
-          'h-16 flex items-center bg-slate-50/90 dark:bg-[#130B29] border-b border-slate-200/80 dark:border-violet-500/20 transition-all',
-          collapsed ? 'justify-center px-2' : 'justify-between px-5'
+          'h-16 flex items-center border-b border-slate-100 dark:border-zinc-800/80 transition-all shrink-0',
+          collapsed ? 'justify-center px-2' : 'justify-between px-4'
         )}
       >
         <NavLink
           to="/dashboard"
-          className="flex items-center gap-3 group min-w-0"
+          className="flex items-center gap-2.5 group min-w-0"
           onClick={onNavigate}
-          title="3-Politexnikum Talabalar Portali"
+          title="3-Politexnikum"
         >
-          {/* Dual-triangle geometric brand logo */}
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-violet-600/10 via-purple-600/10 to-indigo-600/10 dark:bg-[#160E28] border border-purple-200/60 dark:border-violet-500/35 flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:border-violet-500 transition-all shrink-0">
-            <svg className="h-6 w-6 filter drop-shadow-[0_2px_8px_rgba(168,85,247,0.4)]" viewBox="0 0 32 32" fill="none">
+          <div className="h-9 w-9 rounded-xl bg-primary/10 dark:bg-primary/15 flex items-center justify-center shrink-0">
+            <svg className="h-5 w-5" viewBox="0 0 32 32" fill="none">
               <path d="M5 25L14 8L18 16L13 25H5Z" fill="url(#sideBrandGrad1)" />
               <path d="M15 25L21 14L27 25H15Z" fill="url(#sideBrandGrad2)" />
               <defs>
                 <linearGradient id="sideBrandGrad1" x1="5" y1="8" x2="18" y2="25" gradientUnits="userSpaceOnUse">
                   <stop stopColor="#F43F5E" />
-                  <stop offset="1" stopColor="#A855F7" />
+                  <stop offset="1" stopColor="#8B5CF6" />
                 </linearGradient>
                 <linearGradient id="sideBrandGrad2" x1="15" y1="14" x2="27" y2="25" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#A855F7" />
-                  <stop offset="1" stopColor="#6366F1" />
+                  <stop stopColor="#8B5CF6" />
+                  <stop offset="1" stopColor="#4F46E5" />
                 </linearGradient>
               </defs>
             </svg>
           </div>
 
           {!collapsed && (
-            <div className="overflow-hidden transition-all duration-200">
-              <span className="font-extrabold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white truncate block">
+            <div className="overflow-hidden">
+              <span className="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-zinc-100 truncate block">
                 3-Politexnikum
               </span>
-              <p className="text-[10px] text-violet-600 dark:text-violet-400 font-bold uppercase tracking-wider truncate flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                Talabalar Portali
-              </p>
             </div>
           )}
         </NavLink>
 
-        {/* Desktop Collapse Toggle in Brand Header */}
         {onToggleCollapse && !collapsed && (
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-colors hidden md:flex items-center justify-center cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors hidden md:flex items-center justify-center cursor-pointer"
             title="Sidebarni yig'ish"
             aria-label="Sidebarni yig'ish"
           >
@@ -138,81 +115,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Navigation Sections */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-thin">
-        {navigationSections.map((section, idx) => (
-          <div key={idx} className="space-y-1">
-            {!collapsed && (
-              <div className="px-3 pb-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-                {section.title}
-              </div>
-            )}
-            {section.items.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
+      {/* Navigation Links */}
+      <nav className="flex-1 overflow-y-auto px-2.5 py-3 space-y-1 scrollbar-thin">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
 
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={onNavigate}
-                  title={collapsed ? item.name : undefined}
-                  className={cn(
-                    'group relative flex items-center transition-all duration-200 select-none cursor-pointer',
-                    collapsed
-                      ? 'justify-center h-11 w-11 mx-auto my-1 rounded-2xl'
-                      : 'justify-between px-3.5 py-2.5 rounded-2xl my-0.5 text-xs sm:text-sm font-medium',
-                    isActive
-                      ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 text-white font-semibold shadow-lg shadow-violet-500/25 dark:shadow-violet-600/35'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5'
-                  )}
-                >
-                  <div className={cn('flex items-center min-w-0', collapsed ? 'justify-center' : 'gap-3')}>
-                    <Icon
-                      className={cn(
-                        'h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover:scale-110',
-                        isActive
-                          ? 'text-white'
-                          : 'text-slate-400 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400'
-                      )}
-                    />
-                    {!collapsed && (
-                      <span className="truncate text-xs sm:text-sm">
-                        {item.name}
-                      </span>
-                    )}
-                  </div>
-
-                  {!collapsed && (
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {item.badge && !isActive && (
-                        <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
-                          {item.badge}
-                        </span>
-                      )}
-                      <ChevronRight
-                        className={cn(
-                          'h-3.5 w-3.5 transition-all duration-200',
-                          isActive
-                            ? 'opacity-90 translate-x-0.5'
-                            : 'opacity-0 -translate-x-1 group-hover:opacity-40 group-hover:translate-x-0'
-                        )}
-                      />
-                    </div>
-                  )}
-                </NavLink>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={onNavigate}
+              title={collapsed ? item.name : undefined}
+              className={cn(
+                'flex items-center transition-all duration-150 select-none cursor-pointer',
+                collapsed
+                  ? 'justify-center h-10 w-10 mx-auto rounded-xl'
+                  : 'gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium',
+                isActive
+                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100 hover:bg-slate-100 dark:hover:bg-zinc-800/70'
+              )}
+            >
+              <Icon
+                className={cn(
+                  'h-[18px] w-[18px] shrink-0',
+                  isActive ? 'text-primary-foreground' : 'text-slate-400 dark:text-zinc-500'
+                )}
+              />
+              {!collapsed && <span className="truncate">{item.name}</span>}
+            </NavLink>
+          );
+        })}
+      </nav>
 
       {/* Expand Button for Collapsed State */}
       {onToggleCollapse && collapsed && (
-        <div className="p-2 border-t border-slate-200/80 dark:border-violet-500/20 flex justify-center hidden md:flex">
+        <div className="p-2 border-t border-slate-100 dark:border-zinc-800/80 flex justify-center hidden md:flex">
           <button
             onClick={onToggleCollapse}
-            className="p-2 rounded-xl text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
             title="Sidebarni ochish"
             aria-label="Sidebarni ochish"
           >
@@ -221,50 +163,45 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* User Footer Card */}
-      <div className={cn('border-t-2 border-slate-200/90 dark:border-violet-500/25 mt-auto bg-slate-50/90 dark:bg-[#130B29] transition-all', collapsed ? 'p-2' : 'p-3')}>
+      {/* User Footer */}
+      <div className={cn('border-t border-slate-100 dark:border-zinc-800/80 mt-auto transition-all', collapsed ? 'p-2' : 'p-3')}>
         {collapsed ? (
           <div className="flex flex-col items-center gap-2">
             <NavLink
               to="/profile"
               title={`${user?.first_name || 'Talaba'} (${user?.group || '301-AT'})`}
-              className="relative group hover:opacity-95 transition-opacity"
+              className="hover:opacity-90 transition-opacity"
             >
-              <Avatar className="h-9 w-9 ring-2 ring-violet-500/40 mx-auto shadow-sm">
+              <Avatar className="h-9 w-9 ring-1 ring-slate-200 dark:ring-zinc-700 mx-auto">
                 <AvatarImage src={user?.avatar} alt={user?.first_name} />
-                <AvatarFallback className="bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-xs">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                   {user?.first_name?.[0] || 'T'}
                 </AvatarFallback>
               </Avatar>
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#130B29]" />
             </NavLink>
             <button
               onClick={handleLogout}
               title="Tizimdan chiqish"
-              className="p-2 rounded-xl text-slate-400 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
         ) : (
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-[#181132] border border-slate-200/90 dark:border-violet-500/30 shadow-xs">
-            <NavLink to="/profile" className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-90 transition-opacity">
-              <div className="relative shrink-0">
-                <Avatar className="h-9 w-9 ring-2 ring-violet-500/30">
-                  <AvatarImage src={user?.avatar} alt={user?.first_name} />
-                  <AvatarFallback className="bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-xs">
-                    {user?.first_name?.[0] || 'T'}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#18112C]" />
-              </div>
+          <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-200/60 dark:border-zinc-800">
+            <NavLink to="/profile" className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-90 transition-opacity">
+              <Avatar className="h-8 w-8 ring-1 ring-slate-200 dark:ring-zinc-700 shrink-0">
+                <AvatarImage src={user?.avatar} alt={user?.first_name} />
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                  {user?.first_name?.[0] || 'T'}
+                </AvatarFallback>
+              </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                <p className="text-xs font-semibold text-slate-900 dark:text-zinc-100 truncate">
                   {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : 'Talaba'}
                 </p>
-                <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
-                  <span>{user?.group || '301-AT'}</span>
-                  {user?.gpa && <span className="text-emerald-500 font-semibold">• GPA {user.gpa}</span>}
+                <p className="text-[11px] text-slate-500 dark:text-zinc-400 truncate">
+                  {user?.group || '301-AT'}
                 </p>
               </div>
             </NavLink>
@@ -272,7 +209,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={handleLogout}
               title="Tizimdan chiqish"
-              className="p-2 rounded-xl text-slate-400 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer ml-1 shrink-0"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer shrink-0"
             >
               <LogOut className="h-4 w-4" />
             </button>
