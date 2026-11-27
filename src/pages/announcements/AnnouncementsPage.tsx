@@ -35,7 +35,7 @@ export const AnnouncementsPage: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">E'lonlar & Yangiliklar</h2>
         <p className="text-sm text-muted-foreground">
-          Politexnikum ma'muriyati va dekanat tomonidan berilgan rasmiy xabarlar (Swagger API)
+          Politexnikum ma'muriyati va dekanat tomonidan berilgan rasmiy xabarlar
         </p>
       </div>
 

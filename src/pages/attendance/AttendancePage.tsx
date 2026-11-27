@@ -67,7 +67,7 @@ export const AttendancePage: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">Davomat jurnali</h2>
         <p className="text-sm text-muted-foreground">
-          Darslarga qatnashish nazorati va davomat ko'rsatkichlari (Swagger REST API)
+          Darslarga qatnashish nazorati va davomat ko'rsatkichlari
         </p>
       </div>
 

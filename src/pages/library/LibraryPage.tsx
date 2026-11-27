@@ -45,7 +45,7 @@ export const LibraryPage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Elektron kutubxona</h2>
           <p className="text-sm text-muted-foreground">
-            O'quv qo'llanmalari, darsliklar va texnik adabiyotlar arxivi (Swagger API)
+            O'quv qo'llanmalari, darsliklar va texnik adabiyotlar arxivi
           </p>
         </div>
 

@@ -54,7 +54,7 @@ export const SchedulePage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Dars jadvali</h2>
           <p className="text-sm text-muted-foreground">
-            Dars mashg'ulotlari, xonalar va vaqtlar jadvali (Swagger REST API)
+            Dars mashg'ulotlari, xonalar va vaqtlar jadvali
           </p>
         </div>
 

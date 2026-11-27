@@ -9,7 +9,6 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-  Server,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,7 +53,7 @@ export const LoginPage: React.FC = () => {
           ? err.response.data.password[0]
           : err.response.data.password;
       } else if (err?.message === 'Network Error') {
-        errorMsg = "API serverga (169.58.215.170:8090) ulanishda xatolik yuz berdi. Internetni tekshiring.";
+        errorMsg = "Serverga ulanishda xatolik yuz berdi. Internetni tekshiring.";
       }
       setError(errorMsg);
     } finally {
@@ -101,7 +100,7 @@ export const LoginPage: React.FC = () => {
             <div className="space-y-1">
               <h2 className="text-xl font-bold text-foreground">Tizimga kirish</h2>
               <p className="text-xs text-muted-foreground">
-                Swagger API (169.58.215.170:8090) orqali avtorizatsiyadan o'ting
+                Profilingizga kirish uchun login va parolingizni kiriting
               </p>
             </div>
 
@@ -174,15 +173,10 @@ export const LoginPage: React.FC = () => {
               </Button>
             </form>
 
-            {/* Server connection indicator */}
-            <div className="pt-4 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
-              <div className="flex items-center gap-1.5 font-medium">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <Server className="h-3.5 w-3.5 text-muted-foreground" />
-                <span>API: 169.58.215.170:8090</span>
-              </div>
-              <span className="flex items-center gap-1 text-emerald-500 font-semibold">
-                <ShieldCheck className="h-3.5 w-3.5" /> SimpleJWT
+            {/* Security indicator */}
+            <div className="pt-4 border-t border-border/60 flex items-center justify-center text-[11px] text-muted-foreground">
+              <span className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck className="h-3.5 w-3.5" /> Xavfsiz tizim
               </span>
             </div>
           </CardContent>

@@ -52,7 +52,7 @@ export const GradesPage: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">Baholar & O'zlashtirish</h2>
         <p className="text-sm text-muted-foreground">
-          Oraliq, yakuniy va joriy nazorat natijalari (Swagger REST API)
+          Oraliq, yakuniy va joriy nazorat natijalari
         </p>
       </div>
 

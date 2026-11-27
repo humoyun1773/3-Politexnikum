@@ -72,7 +72,7 @@ export const ChatPage: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-foreground">Guruh muloqoti</h2>
           <p className="text-sm text-muted-foreground">
-            Swagger REST API orqali guruhdoshlar va o'qituvchilar bilan muloqot
+            Guruhdoshlar va o'qituvchilar bilan muloqot
           </p>
         </div>
       </div>
