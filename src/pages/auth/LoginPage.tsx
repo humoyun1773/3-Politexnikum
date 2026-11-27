@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { SEO } from '@/components/common/SEO';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { cn } from '@/lib/utils';
@@ -29,6 +30,7 @@ export const LoginPage: React.FC = () => {
   const [dialogInfo, setDialogInfo] = useState<{ title: string; message: string } | null>(null);
 
   const { login } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +70,7 @@ export const LoginPage: React.FC = () => {
   const handleSocialClick = (provider: string) => {
     setDialogInfo({
       title: `${provider} orqali kirish`,
-      message: "Talabalar va o'qituvchilar tizimga faqat texnikum ma'muriyati taqdim etgan foydalanuvchi nomi va parol orqali kirishlari mumkin.",
+      message: "Talabalar va o'qituvchilar tizimga faqat texnikum ma'muriyati taqdim etgan rasmiy foydalanuvchi nomi va parol orqali kirishlari mumkin.",
     });
   };
 
@@ -79,11 +81,12 @@ export const LoginPage: React.FC = () => {
         description="3-Politexnikum talabalar axborot boshqaruv tizimiga kirish."
       />
 
-      {/* Floating Theme Toggle (top right) */}
-      <div className="fixed top-5 right-5 z-50">
-        <div className="p-1 rounded-2xl bg-white/80 dark:bg-[#150F24]/80 backdrop-blur-md border border-purple-200/60 dark:border-violet-500/30 shadow-md">
-          <ThemeToggle />
-        </div>
+      {/* Instant 1-Click Floating Theme Toggle */}
+      <div className="fixed top-5 right-5 z-50 flex items-center gap-2.5 bg-white/90 dark:bg-[#150F24]/90 backdrop-blur-xl p-1.5 pl-3.5 rounded-2xl border border-slate-200/80 dark:border-violet-500/35 shadow-lg shadow-purple-500/5 transition-all">
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 select-none hidden sm:inline">
+          {isDark ? "Qorong'i rejim" : "Yorug' rejim"}
+        </span>
+        <ThemeToggle />
       </div>
 
       {/* ================= LIGHT MODE DECORATIONS ================= */}
@@ -94,7 +97,7 @@ export const LoginPage: React.FC = () => {
         <div className="absolute left-1/3 bottom-0 w-[400px] h-[350px] rounded-full bg-indigo-200/25 blur-[120px]" />
 
         {/* Top-right decorative dots matrix */}
-        <div className="absolute top-10 right-16 grid grid-cols-3 gap-2 opacity-50">
+        <div className="absolute top-10 right-20 grid grid-cols-3 gap-2 opacity-50">
           {[...Array(6)].map((_, i) => (
             <span key={`tr-${i}`} className="w-1.5 h-1.5 rounded-full bg-violet-400" />
           ))}
@@ -185,27 +188,34 @@ export const LoginPage: React.FC = () => {
           "dark:bg-[#120B22]/80 dark:backdrop-blur-2xl dark:border-violet-500/35 dark:shadow-[0_0_55px_-5px_rgba(147,51,234,0.32)]"
         )}>
 
-          {/* Top-right corner accent quarter-circle (Light mode only, matching screenshot 2) */}
+          {/* Top-right corner accent quarter-circle (Light mode only, matching screenshot) */}
           <div className="absolute top-0 right-0 w-24 h-24 bg-purple-200/50 rounded-bl-[44px] pointer-events-none dark:hidden transition-opacity" />
 
           <div className="p-7 sm:p-9 space-y-6 relative z-10">
-            {/* 1. BRAND HEADER (Dual-triangle modern geometric glyph + 3-Politexnikum) */}
+            {/* 1. BRAND HEADER (Ultra-sleek modern dual-triangle glyph + 3-Politexnikum) */}
             <div className="flex items-center justify-center gap-2.5">
-              <svg className="h-7 w-7" viewBox="0 0 32 32" fill="none">
-                <path d="M5 25L14 8L18 16L13 25H5Z" fill="url(#brandGrad1)" />
-                <path d="M15 25L21 14L27 25H15Z" fill="url(#brandGrad2)" />
+              <svg className="h-8 w-8 filter drop-shadow-[0_2px_10px_rgba(168,85,247,0.4)]" viewBox="0 0 36 36" fill="none">
+                <path
+                  d="M6 27L15 9L20 18L14 27H6Z"
+                  fill="url(#brandGrad1)"
+                />
+                <path
+                  d="M16 27L23 15L29 27H16Z"
+                  fill="url(#brandGrad2)"
+                />
                 <defs>
-                  <linearGradient id="brandGrad1" x1="5" y1="8" x2="18" y2="25" gradientUnits="userSpaceOnUse">
+                  <linearGradient id="brandGrad1" x1="6" y1="9" x2="20" y2="27" gradientUnits="userSpaceOnUse">
                     <stop stopColor="#F43F5E" />
-                    <stop offset="1" stopColor="#A855F7" />
+                    <stop offset="0.6" stopColor="#D946EF" />
+                    <stop offset="1" stopColor="#8B5CF6" />
                   </linearGradient>
-                  <linearGradient id="brandGrad2" x1="15" y1="14" x2="27" y2="25" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#A855F7" />
+                  <linearGradient id="brandGrad2" x1="16" y1="15" x2="29" y2="27" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#8B5CF6" />
                     <stop offset="1" stopColor="#6366F1" />
                   </linearGradient>
                 </defs>
               </svg>
-              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                 3-Politexnikum
               </span>
             </div>
@@ -231,8 +241,8 @@ export const LoginPage: React.FC = () => {
             {/* 3. LOGIN FORM */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Username Input */}
-              <div className="relative">
-                <User className="absolute left-4 top-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+              <div className="relative group">
+                <User className="absolute left-4 top-3.5 h-[18px] w-[18px] text-slate-400 group-focus-within:text-violet-600 dark:group-focus-within:text-violet-400 pointer-events-none transition-colors" />
                 <Input
                   type="text"
                   value={username}
@@ -249,8 +259,8 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {/* Password Input */}
-              <div className="relative">
-                <Lock className="absolute left-4 top-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+              <div className="relative group">
+                <Lock className="absolute left-4 top-3.5 h-[18px] w-[18px] text-slate-400 group-focus-within:text-violet-600 dark:group-focus-within:text-violet-400 pointer-events-none transition-colors" />
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -266,7 +276,8 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
+                  className="absolute right-4 top-3.5 text-slate-400 hover:text-violet-600 dark:hover:text-violet-300 transition-colors cursor-pointer"
+                  title={showPassword ? "Parolni berkitish" : "Parolni ko'rsatish"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -298,7 +309,7 @@ export const LoginPage: React.FC = () => {
                     title: "Parolni unutdingizmi?",
                     message: "Parolni tiklash yoki yangilash uchun 3-Politexnikum dekanati yoki tizim administratoriga murojaat qiling.",
                   })}
-                  className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors"
+                  className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors cursor-pointer"
                 >
                   Parolni unutdingizmi?
                 </button>
@@ -309,8 +320,8 @@ export const LoginPage: React.FC = () => {
                 type="submit"
                 disabled={isSubmitting}
                 className={cn(
-                  "w-full h-12 rounded-2xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 mt-2",
-                  "bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700",
+                  "w-full h-12 rounded-2xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 mt-2 group",
+                  "bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700",
                   "shadow-lg shadow-violet-500/25 dark:shadow-violet-600/35 active:scale-[0.99] disabled:opacity-70 cursor-pointer"
                 )}
               >
@@ -321,7 +332,7 @@ export const LoginPage: React.FC = () => {
                   </span>
                 ) : (
                   <>
-                    Kirish <ArrowRight className="h-4 w-4" />
+                    Kirish <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </>
                 )}
               </button>
@@ -336,20 +347,20 @@ export const LoginPage: React.FC = () => {
               <div className="h-px bg-slate-200 dark:bg-white/10 flex-1" />
             </div>
 
-            {/* 5. SOCIAL LOGIN BUTTONS (Google, Telegram, GitHub) */}
+            {/* 5. BEAUTIFUL SOCIAL LOGIN BUTTONS (Google, Telegram, GitHub) */}
             <div className="grid grid-cols-3 gap-3">
               {/* Google */}
               <button
                 type="button"
                 onClick={() => handleSocialClick('Google')}
                 className={cn(
-                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer",
-                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs",
+                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer group",
+                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs hover:shadow-md",
                   "dark:bg-[#1B142D]/80 dark:border-white/10 dark:hover:border-violet-500/40 dark:hover:bg-[#221a38]"
                 )}
                 aria-label="Google orqali kirish"
               >
-                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 transform group-hover:scale-110 transition-transform duration-200" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
@@ -362,14 +373,24 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleSocialClick('Telegram')}
                 className={cn(
-                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer",
-                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs",
+                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer group",
+                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs hover:shadow-md",
                   "dark:bg-[#1B142D]/80 dark:border-white/10 dark:hover:border-violet-500/40 dark:hover:bg-[#221a38]"
                 )}
                 aria-label="Telegram orqali kirish"
               >
-                <svg className="h-5 w-5 text-[#24A1DE]" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                <svg className="h-6 w-6 transform group-hover:scale-110 transition-transform duration-200" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="11" fill="url(#tgGradOfficial)" />
+                  <path
+                    d="M6.8 11.9l9.6-3.9c.4-.2.8.1.7.5l-1.6 7.6c-.1.5-.4.6-.9.3l-2.4-1.8-1.2 1.1c-.2.2-.3.3-.5.3l.2-2.5 4.5-4.1c.2-.2 0-.3-.3-.1l-5.6 3.5-2.4-.7c-.5-.2-.5-.5.1-.8z"
+                    fill="white"
+                  />
+                  <defs>
+                    <linearGradient id="tgGradOfficial" x1="12" y1="1" x2="12" y2="23" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#2AABEE" />
+                      <stop offset="1" stopColor="#229ED9" />
+                    </linearGradient>
+                  </defs>
                 </svg>
               </button>
 
@@ -378,13 +399,13 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleSocialClick('GitHub')}
                 className={cn(
-                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer",
-                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs",
+                  "h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer group",
+                  "bg-[#FAF9FD] border border-slate-200 hover:border-violet-300 hover:bg-white shadow-xs hover:shadow-md",
                   "dark:bg-[#1B142D]/80 dark:border-white/10 dark:hover:border-violet-500/40 dark:hover:bg-[#221a38]"
                 )}
                 aria-label="GitHub orqali kirish"
               >
-                <svg className="h-5 w-5 fill-current text-slate-800 dark:text-white" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 fill-current text-slate-800 dark:text-white transform group-hover:scale-110 transition-transform duration-200" viewBox="0 0 24 24">
                   <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                 </svg>
               </button>
@@ -401,7 +422,7 @@ export const LoginPage: React.FC = () => {
                   title: "Ro'yxatdan o'tish",
                   message: "Talabalar va xodimlar akkaunti 3-Politexnikum ma'muriyati tomonidan ochiladi. Ro'yxatdan o'tish yoki ma'lumot olish uchun dekanatga murojaat qiling.",
                 })}
-                className="text-xs sm:text-sm font-bold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 hover:underline transition-colors"
+                className="text-xs sm:text-sm font-bold text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 hover:underline transition-colors cursor-pointer"
               >
                 Ro'yxatdan o'tish
               </button>
@@ -421,7 +442,7 @@ export const LoginPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setDialogInfo(null)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
+                className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -431,7 +452,7 @@ export const LoginPage: React.FC = () => {
             </p>
             <button
               onClick={() => setDialogInfo(null)}
-              className="w-full h-10 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors"
+              className="w-full h-10 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors cursor-pointer"
             >
               Tushunarli
             </button>
