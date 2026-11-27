@@ -53,8 +53,8 @@ export const DashboardLayout: React.FC = () => {
   const title = getPageTitle(location.pathname);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F3F2F8] dark:bg-[#06030B] transition-colors duration-200">
-      {/* Desktop Collapsible Sidebar */}
+    <div className="flex h-screen w-screen overflow-hidden bg-[#EFEFF6] dark:bg-[#06030B] p-2.5 sm:p-3.5 gap-2.5 sm:gap-3.5 transition-colors duration-200">
+      {/* Desktop Collapsible Floating Rounded Sidebar */}
       <Sidebar
         collapsed={isCollapsed}
         onToggleCollapse={handleToggleSidebar}
@@ -63,29 +63,29 @@ export const DashboardLayout: React.FC = () => {
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
+        <div className="fixed inset-0 z-50 md:hidden flex p-2.5">
           <div
             className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative z-50 flex flex-col w-72 max-w-[80vw] h-full bg-white dark:bg-[#0E081D] shadow-2xl animate-in slide-in-from-left duration-200 border-r border-slate-200 dark:border-violet-500/30">
+          <div className="relative z-50 flex flex-col w-72 max-w-[82vw] h-full rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-left duration-200">
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 z-10 cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-xl text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10 z-20 cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
             <Sidebar
               collapsed={false}
               onNavigate={() => setMobileMenuOpen(false)}
-              className="w-full border-r-0 shadow-none"
+              className="w-full shadow-none"
             />
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden bg-[#F3F2F8] dark:bg-[#06030B]">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden gap-2.5 sm:gap-3.5">
         <Header
           onToggleMobileMenu={() => setMobileMenuOpen(true)}
           onToggleSidebar={handleToggleSidebar}
@@ -93,7 +93,7 @@ export const DashboardLayout: React.FC = () => {
           title={title}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto px-1 sm:px-2 pb-4 pt-1">
           <div className="max-w-7xl mx-auto space-y-6">
             <Outlet />
           </div>

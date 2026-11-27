@@ -127,9 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="h-16 px-4 sm:px-6 bg-white dark:bg-[#120B25] border-b-2 border-slate-200/90 dark:border-violet-500/35 sticky top-0 z-20 flex items-center justify-between gap-4 transition-colors duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.5)] relative">
-        {/* Bottom Accent Glow Line */}
-        <div className="absolute left-0 right-0 bottom-0 h-[1.5px] bg-gradient-to-r from-violet-500/10 via-violet-500/50 to-indigo-500/10 pointer-events-none" />
+      <header className="h-16 px-4 sm:px-5 bg-white dark:bg-[#120B25] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-violet-500/30 z-20 flex items-center justify-between gap-4 transition-colors duration-200 shadow-[0_8px_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_30px_-5px_rgba(0,0,0,0.5)] shrink-0 relative">
         {/* Left: Sidebar Toggle & Page Breadcrumb */}
         <div className="flex items-center gap-2.5 sm:gap-4">
           {/* Mobile drawer toggle */}

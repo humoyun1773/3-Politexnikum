@@ -76,18 +76,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={cn(
-        'flex flex-col h-full bg-white dark:bg-[#0E081E] border-r-2 border-slate-200/90 dark:border-violet-500/35 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-[5px_0_25px_rgba(0,0,0,0.05)] dark:shadow-[6px_0_35px_rgba(0,0,0,0.7)]',
+        'flex flex-col h-full bg-white dark:bg-[#0E081E] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-violet-500/30 select-none shrink-0 transition-all duration-300 ease-in-out relative z-30 shadow-[0_10px_35px_-5px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_40px_-5px_rgba(0,0,0,0.65)]',
         collapsed ? 'w-20' : 'w-64',
         className
       )}
     >
-      {/* Right Edge Neon Accent Strip */}
-      <div className="absolute top-0 right-0 bottom-0 w-[1.5px] bg-gradient-to-b from-violet-500/10 via-violet-500/50 to-purple-500/10 pointer-events-none" />
-
       {/* Brand Header */}
       <div
         className={cn(
-          'h-16 flex items-center bg-slate-50/90 dark:bg-[#130B29] border-b-2 border-slate-200/90 dark:border-violet-500/25 transition-all',
+          'h-16 flex items-center bg-slate-50/90 dark:bg-[#130B29] border-b border-slate-200/80 dark:border-violet-500/20 transition-all',
           collapsed ? 'justify-center px-2' : 'justify-between px-5'
         )}
       >
